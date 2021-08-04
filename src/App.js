@@ -3,6 +3,7 @@ import {SafeAreaView, Text} from 'react-native';
 import firebase from 'firebase';
 
 import Header from './components/Header';
+import LoginForm from './components/LoginForm';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDW6f7kE7KGQRpkQt3ZjPDe1cgylxReCik',
@@ -17,10 +18,11 @@ const App = () => {
   useEffect(() => {
     firebase.initializeApp(firebaseConfig);
   }, []);
+
   return (
     <SafeAreaView>
-      <Header title={'Authorisation'} />
-      <Text>App</Text>
+      <Header title={'Authentication'} />
+      <LoginForm />
     </SafeAreaView>
   );
 };
