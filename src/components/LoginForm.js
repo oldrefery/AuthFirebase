@@ -12,8 +12,8 @@ const LoginForm = () => {
     <View style={styles.container}>
       <View style={styles.section}>
         <Input
-          title={'Login'}
-          placeholder={'Type e-mail'}
+          title={'EMail'}
+          placeholder={'user@gmail.com'}
           value={name}
           setValue={setName}
         />
