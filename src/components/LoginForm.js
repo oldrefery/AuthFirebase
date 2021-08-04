@@ -1,12 +1,60 @@
 import React, {useState} from 'react';
-import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import firebase from 'firebase';
+
 import Input from './Input';
+import Spinner from './Spinner';
 
 const LoginForm = () => {
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {};
+  const handleLogin = () => {
+    setError('');
+    setIsLoading(true);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(onLoginSuccess)
+      .catch(() =>
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(onLoginSuccess)
+          .catch(onLoginFail),
+      );
+  };
+
+  const onLoginSuccess = () => {
+    setError('');
+    setIsLoading(false);
+    setEmail('');
+    setPassword('');
+  };
+
+  const onLoginFail = () => {
+    setError('Authentication Failed');
+    setIsLoading(false);
+  };
+
+  const renderButton = () => {
+    return (
+      <View style={styles.container}>
+        <Pressable
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={isLoading}>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <Text style={styles.titleButton}>Log In</Text>
+          )}
+        </Pressable>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -14,8 +62,8 @@ const LoginForm = () => {
         <Input
           title={'EMail'}
           placeholder={'user@gmail.com'}
-          value={name}
-          setValue={setName}
+          value={email}
+          setValue={setEmail}
         />
       </View>
       <View style={styles.section}>
@@ -27,11 +75,8 @@ const LoginForm = () => {
           secure
         />
       </View>
-      <View style={styles.section}>
-        <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={styles.titleButton}>Log In</Text>
-        </Pressable>
-      </View>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {renderButton()}
     </View>
   );
 };
@@ -54,6 +99,11 @@ const styles = StyleSheet.create({
   titleButton: {
     fontSize: 18,
     color: 'white',
+  },
+  error: {
+    color: 'red',
+    fontSize: 20,
+    alignSelf: 'center',
   },
 });
 
